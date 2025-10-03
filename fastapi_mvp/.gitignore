@@ -1,1 +1,8 @@
-.env # bare hvis den mangler
+
+# Sikkerhet 
+.env
+*.env
+.env.*
+
+#cache
+__pycache__/
