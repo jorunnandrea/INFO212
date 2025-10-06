@@ -6,19 +6,19 @@ from app.main import app
 
 client = TestClient(app)
 
+
+#første test er bare for å se at vi får 200 tilbake
 def test_homepage_status_code():
-    """Tester at startsiden returnerer statuskode 200"""
     response = client.get("/")
     assert response.status_code == 200
 
-# Test 2: sjekk at startsiden inneholder forventet tekst
+# ser om vi får svar på arrangemnter eller Bergen
 def test_homepage_content():
     response = client.get("/")
     assert "Arrangementer" in response.text or "Bergen" in response.text
 
-# Test 3: sjekk at API-et returnerer data i riktig format
+#se på formantet vi mottar data i
 def test_event_data_structure():
     response = client.get("/")
-    # sjekk at responsen inneholder HTML som genereres fra events-listen
     assert "<html" in response.text.lower()
     assert "</body>" in response.text.lower()
