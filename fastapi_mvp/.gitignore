@@ -6,3 +6,10 @@
 
 #cache
 __pycache__/
+
+# Lokale testfiler
+app/dev.py
+app/test.py
+
+# macOS systemfiler
+.DS_Store
