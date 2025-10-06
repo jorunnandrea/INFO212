@@ -6,7 +6,6 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from dotenv import load_dotenv
 
-# 🚀 Sørg for at vi alltid finner .env i rotmappa
 env_path = Path(__file__).resolve().parent.parent / ".env"
 load_dotenv(dotenv_path=env_path)
 
@@ -49,6 +48,7 @@ def home(
     data = response.json()
 
     events = data.get("_embedded", {}).get("events", [])
-    #return templates.TemplateResponse("home.html", {"request": request, "events": events})
     return templates.TemplateResponse(request, "home.html", {"events": events})
+
+
 
