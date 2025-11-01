@@ -6,7 +6,6 @@ from app.main import app
 
 client = TestClient(app)
 
-
 #første test er bare for å se at vi får 200 tilbake
 def test_homepage_status_code():
     response = client.get("/")

@@ -21,6 +21,7 @@ def home(
     endDate: str = None,
     classification: str = None,
     size: int = 200,
+    keyword: str = None,  
 ):
     api_key = os.environ.get("API_KEY")
     if not api_key:
@@ -41,14 +42,26 @@ def home(
         params["startDateTime"] = f"{startDate}T00:00:00Z"
         params["endDateTime"] = f"{endDate}T23:59:59Z"
 
-    if classification:
+    if classification and classification.strip() != "":
         params["classificationName"] = classification
+
+    if keyword:
+        params["keyword"] = keyword
+        params["q"] = keyword  
+
 
     response = requests.get("https://app.ticketmaster.com/discovery/v2/events.json", params=params)
     data = response.json()
 
     events = data.get("_embedded", {}).get("events", [])
-    return templates.TemplateResponse(request, "home.html", {"events": events})
+    #return templates.TemplateResponse(request, "home.html", {"events": events})
 
+    return templates.TemplateResponse(request, "home.html", {
+        "events": events,
+        "startDate": startDate or "",
+        "endDate": endDate or "",
+        "classification": classification or "",
+        "keyword": keyword or ""
+})
 
 

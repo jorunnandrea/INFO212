@@ -3,6 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <title> Ka skjer Bergen?</title>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+          const today = new Date().toISOString().split("T")[0];
+          const startDate = document.querySelector('input[name="startDate"]');
+          const endDate = document.querySelector('input[name="endDate"]');
+        
+          // Ikke tillat dato bakover i tid
+          startDate.min = today;
+          endDate.min = today;
+        
+          // Når brukeren velger startdato, oppdater endDate.min
+          startDate.addEventListener("change", () => {
+            endDate.min = startDate.value;
+          });
+        });
+        </script>
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -11,6 +29,7 @@
             margin: 0;
             padding: 0;
         }
+
         .container {
             max-width: 900px;
             margin: 30px auto;
@@ -19,29 +38,61 @@
             border-radius: 12px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
+
         form {
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
             margin-bottom: 20px;
+            align-items: center;
         }
-        input, select, button {
+
+        input, select {
             padding: 8px;
             border: 1px solid #ccc;
             border-radius: 6px;
         }
-        button {
+
+        /* --- KNAPPER --- */
+
+        /* Make stil */
+        button[type="submit"],
+        .reset-button {
             background-color: #0066cc;
             color: white;
+            border: none;
+            border-radius: 6px;
             cursor: pointer;
+            text-align: center;
+            transition: background-color 0.2s;
         }
-        button:hover {
+
+        /* Stor søkeknapp */
+        button[type="submit"] {
+            padding: 10px 22px;
+            font-size: 16px;
+            margin-right: 6px; /* Luft*/
+        }
+
+        /* Nullstill knapp */
+        .reset-button {
+            padding: 6px 12px;
+            font-size: 13px;
+            text-decoration: none;
+        }
+
+        /* Hover-effekt*/
+        button[type="submit"]:hover,
+        .reset-button:hover {
             background-color: #004999;
         }
+
+        /* --- ARRANGEMENTLISTE --- */
         .event {
             border-bottom: 1px solid #eee;
             padding: 10px 0;
         }
+
         .event img {
             max-width: 150px;
             border-radius: 6px;
@@ -49,27 +100,36 @@
     </style>
 </head>
 <body>
-<div class="container">
-    <h1> Ka skjer Bergen?</h1>
-
-    <form method="get" action="/">
-        <label>Fra dato:</label>
-        <input type="date" name="startDate">
-        <label>Til dato:</label>
-        <input type="date" name="endDate">
-
-        <label>Type arrangement:</label>
-        <select name="classification">
-            <option value="">Alle</option>
-            <option value="Music">Musikk</option>
-            <option value="Theatre">Teater</option>
-            <option value="Comedy">Standup / Humor</option>
-            <option value="Festival">Festival</option>
-            <option value="Sports">Sport</option>
-        </select>
-
-        <button type="submit">Søk</button>
-    </form>
+    <div class="container">
+        <h1>Ka skjer Bergen?</h1>
+    
+        <form method="get" action="/">
+            <div class="search-bar">
+                <input type="text" name="keyword" placeholder="Søk etter artist, arrangement eller sted" value="{{ keyword or '' }}">
+                <button type="submit">Søk</button>
+            </div>
+    
+            <div class="filters">
+                <label>Fra dato:</label>
+                <input type="date" name="startDate" value="{{ startDate }}">
+                <label>Til dato:</label>
+                <input type="date" name="endDate" value="{{ endDate }}">
+    
+                <label>Type arrangement:</label>
+                <select name="classification">
+                    <option value="" {% if not classification %}selected{% endif %}>Alle</option>
+                    <option value="Music" {% if classification == 'Music' %}selected{% endif %}>Musikk</option>
+                    <option value="Theatre" {% if classification == 'Theatre' %}selected{% endif %}>Teater</option>
+                    <option value="Comedy" {% if classification == 'Comedy' %}selected{% endif %}>Standup / Humor</option>
+                    <option value="Festival" {% if classification == 'Festival' %}selected{% endif %}>Festival</option>
+                    <option value="Sports" {% if classification == 'Sports' %}selected{% endif %}>Sport</option>
+                </select>
+    
+                <button type="submit">Søk</button>
+                <a href="/" class="reset-button">Nullstill</a>
+            </div>
+        </form>
+    
 
     {% if events %}
         {% for e in events %}
