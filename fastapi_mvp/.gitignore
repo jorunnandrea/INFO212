@@ -12,4 +12,4 @@ app/dev.py
 app/test.py
 
 # macOS systemfiler
-.DS_Store
+.DS_Storeusers.db

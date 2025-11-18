@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title> Ka skjer Bergen?</title>
 
-    <!-- Fikk en del irriterende 404 feilmelding når jeg refrehet siden, så ved å legge inn disse lenkene forsvant de-->
+    <!-- Fikk en del irriterende 404 feilmelding når jeg refeshet siden, så ved å legge inn disse lenkene forsvant de-->
     <link rel="icon" href="https://icons.iconarchive.com/icons/papirus-team/papirus-apps/256/gnome-calendar-icon.png">
     <link rel="apple-touch-icon" href="https://icons.iconarchive.com/icons/papirus-team/papirus-apps/256/gnome-calendar-icon.png">
 
@@ -41,6 +41,27 @@
             padding: 30px;
             border-radius: 12px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .auth-section {
+            text-align: right;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        .auth-link {
+            text-decoration: none;
+            padding: 8px 16px;
+            background-color: #0066cc;
+            color: white;
+            border-radius: 6px;
+            margin-left: 10px;
+        }
+
+        .auth-link:hover {
+            background-color: #004999;
         }
 
         form {
@@ -105,6 +126,17 @@
 </head>
 <body>
     <div class="container">
+        <!-- Autentiseringsseksjon - bare innloggingsknapp når ikke logget inn -->
+        <div class="auth-section">
+            {% if current_user %}
+                <span>Velkommen, {{ current_user.username }}!</span>
+                <a href="/logout" class="auth-link">Logg ut</a>
+                <a href="/dashboard" class="auth-link">Dashboard</a>
+            {% else %}
+                <a href="/login" class="auth-link">Logg inn</a>
+            {% endif %}
+        </div>
+
         <h1>Ka skjer Bergen?</h1>
     
         <form method="get" action="/">

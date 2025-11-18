@@ -1,17 +1,130 @@
 import os
 from pathlib import Path
-from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI, Request, Form, Response, HTTPException
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
-from .services.repository import fetch_events
+from passlib.context import CryptContext
+import sqlite3
+from app.services.repository import fetch_events
 
 env_path = Path(__file__).resolve().parent.parent / ".env"
 load_dotenv(dotenv_path=env_path)
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
+# Passordhashing
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+# Databasefunksjoner
+def get_db():
+    conn = sqlite3.connect("users.db")
+    conn.row_factory = sqlite3.Row
+    return conn
+
+def init_db():
+    db = get_db()
+    db.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE NOT NULL,
+            password_hash TEXT NOT NULL,
+            email TEXT UNIQUE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+    db.commit()
+    db.close()
+
+# Initialiser database ved oppstart
+init_db()
+
+# Hjelpefunksjon for å sjekke om bruker er logget inn
+def get_current_user(request: Request):
+    user_id = request.cookies.get("user_id")
+    if user_id:
+        db = get_db()
+        user = db.execute("SELECT id, username FROM users WHERE id = ?", (user_id,)).fetchone()
+        db.close()
+        return user
+    return None
+
+# Ruter for brukerfunksjonalitet
+@app.get("/login", response_class=HTMLResponse)
+def show_login(request: Request):
+    return templates.TemplateResponse("login.html", {"request": request})
+
+@app.post("/login")
+def login(response: Response, username: str = Form(...), password: str = Form(...)):
+    db = get_db()
+    user = db.execute("SELECT * FROM users WHERE username = ?", (username,)).fetchone()
+    db.close()
+    
+    if user and pwd_context.verify(password, user["password_hash"]):
+        response = RedirectResponse(url="/dashboard", status_code=303)
+        response.set_cookie(key="user_id", value=str(user["id"]), httponly=True)
+        return response
+    else:
+        return templates.TemplateResponse("login.html", {
+            "request": request,
+            "error": "Invalid username or password"
+        })
+
+@app.get("/signup", response_class=HTMLResponse)
+def show_signup(request: Request):
+    return templates.TemplateResponse("signup.html", {"request": request})
+
+@app.post("/signup")
+def signup(
+    request: Request,
+    username: str = Form(...), 
+    email: str = Form(...), 
+    password: str = Form(...), 
+    confirm_password: str = Form(...)
+):
+    if password != confirm_password:
+        return templates.TemplateResponse("signup.html", {
+            "request": request,
+            "error": "Passwords do not match"
+        })
+    
+    db = get_db()
+    hashed_password = pwd_context.hash(password)
+    
+    try:
+        db.execute("INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)", 
+                   (username, email, hashed_password))
+        db.commit()
+        db.close()
+        return RedirectResponse(url="/login", status_code=303)
+    except sqlite3.IntegrityError:
+        db.close()
+        return templates.TemplateResponse("signup.html", {
+            "request": request,
+            "error": "Username or email already exists"
+        })
+
+@app.get("/logout")
+def logout(response: Response):
+    response = RedirectResponse(url="/", status_code=303)
+    response.delete_cookie("user_id")
+    return response
+
+@app.get("/dashboard", response_class=HTMLResponse)
+def show_dashboard(request: Request):
+    user = get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/login", status_code=302)
+    
+    return templates.TemplateResponse("dashboard.html", {
+        "request": request,
+        "username": user["username"]
+    })
+
+# Oppdatert hjemmesiderute med brukerinfo
 @app.get("/", response_class=HTMLResponse)
 def home(
     request: Request,
@@ -20,6 +133,7 @@ def home(
     classification: str | None = None,
     keyword: str | None = None,
 ):
+    user = get_current_user(request)  # Sjekk om bruker er logget inn
     events = fetch_events(startDate, endDate, classification, keyword)
     return templates.TemplateResponse(
         "home.html",
@@ -30,5 +144,6 @@ def home(
             "endDate": endDate or "",
             "classification": classification or "",
             "keyword": keyword or "",
+            "current_user": user  # Send brukerinfo til malen
         },
     )
