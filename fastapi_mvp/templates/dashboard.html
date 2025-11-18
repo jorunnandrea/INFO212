@@ -7,20 +7,28 @@
     <link rel="stylesheet" href="{{ url_for('static', path='/style.css') }}">
 </head>
 <body>
-    <div class="dashboard-container">
-        <h1>Dashboard</h1>
-        <p class="welcome-message">Welcome, <span id="username">{{ username }}</span>!</p>
-        
-        <p>You are now logged in to your account.</p>
-        
-        <a href="#" class="btn">Profile Settings</a>
-        <a href="#" class="btn">My Account</a>
-        
-        <div class="logout-form">
-            <form action="/logout" method="get">
-                <button type="submit" class="logout-btn">Log Out</button>
-            </form>
+    <nav>
+        <div class="nav-container">
+            <h1><a href="/">Ka skjer i Bergen?</a></h1>
+            {% if current_user %}
+            <div class="nav-user">
+                <span>Velkommen, {{ username }}!</span>
+                <form action="/logout" method="post" style="display: inline;">
+                    <button type="submit">Logg ut</button>
+                </form>
+            </div>
+            {% endif %}
         </div>
+    </nav>
+
+    <div class="container">
+        <h2>Din Dashboard</h2>
+        <p>Du er logget inn som: <strong>{{ username }}</strong></p>
+
+        <!-- ✅ NEW: Link to change password -->
+        <p><a href="/change-password">Endre passord</a></p>
+
+        <!-- Other dashboard content... -->
     </div>
 </body>
 </html>

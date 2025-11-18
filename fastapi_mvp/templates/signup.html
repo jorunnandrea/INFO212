@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up</title>
+    <title>Sign Up Form</title>
     <link rel="stylesheet" href="{{ url_for('static', path='/style.css') }}">
 </head>
 <body>
     <div class="login-container">
         <div class="login-card">
-            <h2>Create Account</h2>
+            <h2>Sign Up</h2>
             {% if error %}
             <div class="error-message">{{ error }}</div>
             {% endif %}
             <form action="/signup" method="post">
                 <div class="input-field">
                     <label for="username">Username</label>
-                    <input type="text" id="username" name="username" required placeholder="Choose a username">
+                    <input type="text" id="username" name="username" required placeholder="Enter your username">
                 </div>
                 <div class="input-field">
                     <label for="email">Email</label>
@@ -24,7 +24,7 @@
                 </div>
                 <div class="input-field">
                     <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required placeholder="Create a password">
+                    <input type="password" id="password" name="password" required placeholder="Enter your password">
                 </div>
                 <div class="input-field">
                     <label for="confirm_password">Confirm Password</label>
@@ -33,7 +33,7 @@
                 <button type="submit" class="login-btn">Sign Up</button>
             </form>
             <div class="links">
-                <a href="/login">Already have an account? Sign In</a>
+                <a href="/login">Already have an account? Log In</a>
             </div>
         </div>
     </div>
