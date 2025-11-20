@@ -18,6 +18,8 @@ app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+
+
 # Passordhashing
 #pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 # Passordhashing (byttet fra bcrypt til pbkdf2_sha256 pga backend-feil)
@@ -69,7 +71,7 @@ def show_login(request: Request):
     return templates.TemplateResponse("login.html", {"request": request})
 
 @app.post("/login")
-#def login(response: Response, username: str = Form(...), password: str = Form(...)):
+#endret fra response: Respons. Fikset bug som gjorde at siden crashet hvis man skriver feilpassord
 def login(request: Request, username: str = Form(...), password: str = Form(...)):    
     db = get_db()
     user = db.execute("SELECT * FROM users WHERE username = ?", (username,)).fetchone()

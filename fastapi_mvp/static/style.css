@@ -1,136 +1,204 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
 
+/* RESET / BASE */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Poppins',sans-serif;
 }
 
+/* detter er hovedfarge på alle side*/
 body {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg,#667eea 0%,#764ba2 100%);
     min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     padding: 20px;
-    background-attachment: fixed;
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  .page-wrap {
+    max-width: 900px;
+    margin: 0 auto 60px;
+    padding: 0 12px;
+  }
+
+/* Auth seksjon øverst (fra base.html) */
+.auth-section {
+  text-align:right;
+  margin-bottom:16px;
+  font-size:14px;
+}
+.auth-section a,
+.auth-section span {
+  display:inline-block;
+  margin-left:8px;
+  text-decoration:none;
+  background:#0066cc;
+  color:#fff;
+  padding:6px 12px;
+  border-radius:6px;
+  font-size:13px;
+  font-weight:500;
+  transition:.2s;
+}
+.auth-section a:hover {
+  background:#004999;
 }
 
-.login-container {
-    width: 100%;
-    max-width: 420px;
-}
-
+/* Kort (brukes til alt: login, søk, event) */
 .login-card {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    padding: 30px;
-    border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
+  background:#fff;
+  padding:20px 22px 24px;
+  border-radius:14px;
+  width:100%;
+  max-width:100%;
+  box-shadow:0 4px 18px rgba(0,0,0,0.10);
+  margin-bottom:20px;
+}
+.login-card h2, .login-card h3 {
+  margin:0 0 14px;
+  font-weight:600;
+  font-size:20px;
+  color:#222;
 }
 
-.login-card:hover {
-    transform: translateY(-5px);
-}
+.login-card--narrow {
+    max-width: 420px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  @media (max-width: 480px) {
+    .login-card--narrow {
+      max-width: 100%;
+    }
+  }
 
-.login-card h2 {
-    text-align: center;
-    color: #333;
-    margin-bottom: 25px;
-    font-size: 28px;
-    font-weight: 600;
-}
 
+/* Input-grupper */
 .input-field {
-    margin-bottom: 20px;
+  margin-bottom:14px;
 }
-
 .input-field label {
-    display: block;
-    margin-bottom: 8px;
-    color: #555;
-    font-weight: 500;
-    font-size: 14px;
+  display:block;
+  font-size:13px;
+  font-weight:500;
+  margin-bottom:4px;
+  color:#444;
+}
+.input-field input,
+.input-field select {
+  width:100%;
+  padding:10px 12px;
+  border:1px solid #ccc;
+  border-radius:8px;
+  font-size:14px;
+  background:#fafafa;
+  transition:.2s;
+}
+.input-field input:focus,
+.input-field select:focus {
+  outline:none;
+  border-color:#667eea;
+  box-shadow:0 0 0 2px rgba(102,126,234,.25);
+  background:#fff;
 }
 
-.input-field input {
-    width: 100%;
-    padding: 14px 16px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    font-size: 16px;
-    transition: all 0.3s ease;
-    background: #fafafa;
+/* Knapper */
+.btn, button, .login-btn {
+  background:#0066cc;
+  color:#fff;
+  padding:10px 18px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:14px;
+  font-weight:500;
+  letter-spacing:.2px;
+  transition:.2s;
+  text-decoration:none;
+  display:inline-block;
+}
+.btn:hover, button:hover, .login-btn:hover {
+  background:#004999;
 }
 
-.input-field input:focus {
-    outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
-    background: white;
+/* Liten sekundær knapp */
+.btn-small {
+  padding:6px 12px;
+  font-size:12px;
+  background:#ccc;
+  color:#222;
+}
+.btn-small:hover {
+  background:#b5b5b5;
 }
 
-.login-btn {
-    width: 100%;
-    padding: 14px;
-    background: linear-gradient(to right, #667eea, #764ba2);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    letter-spacing: 0.5px;
+/* Lenkeliste under skjema */
+.links, .form-links {
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:12px;
+  font-size:13px;
+}
+.links a, .form-links a {
+  color:#0066cc;
+  text-decoration:none;
+}
+.links a:hover, .form-links a:hover {
+  text-decoration:underline;
 }
 
-.login-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+/* Event liste – gjenbruk login-card */
+.event-list {
+  list-style:none;
+  padding:0;
+  margin:0;
+}
+.event-item {
+  padding:10px 0;
+  border-bottom:1px solid #eee;
+  font-size:14px;
+  line-height:1.4;
+}
+.event-item:last-child {
+  border-bottom:none;
+}
+.event-item a {
+  color:#0066cc;
+  font-weight:500;
+  text-decoration:none;
+  font-size:13px;
+}
+.event-item a:hover {
+  text-decoration:underline;
 }
 
-.login-btn:active {
-    transform: translateY(0);
+/* Enkel feilmelding*/
+.error-message {
+  background:#ffefef;
+  color:#c62828;
+  border:1px solid #f5c5c0;
+  padding:10px 12px;
+  border-radius:8px;
+  font-size:13px;
+  margin-bottom:14px;
 }
 
-.links {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-    font-size: 14px;
+/* Responsiv enkel */
+@media (max-width:600px) {
+  .login-card { padding:16px 18px 20px; }
+  .auth-section { font-size:12px; }
+  .btn, .login-btn { padding:9px 16px; font-size:13px; }
 }
 
-.links a {
-    color: #667eea;
-    text-decoration: none;
-    transition: color 0.3s;
-}
 
-.links a:hover {
-    color: #764ba2;
-    text-decoration: underline;
-}
-
-/* Responsive Design */
-@media (max-width: 480px) {
-    .login-card {
-        padding: 20px;
-        border-radius: 12px;
-    }
-
-    .login-card h2 {
-        font-size: 24px;
-    }
-
-    .input-field input {
-        padding: 12px;
-        font-size: 14px;
-    }
-
-    .login-btn {
-        padding: 12px;
-        font-size: 14px;
-    }
-}
+/* bilder til arrangementene */
+.event-thumb {
+    width:150px;
+    height:auto;
+    border-radius:6px;
+    display:block;
+    margin:8px 0 6px;
+  }
