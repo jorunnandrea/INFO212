@@ -23,7 +23,8 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 # Passordhashing
 #pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 # Passordhashing (byttet fra bcrypt til pbkdf2_sha256 pga backend-feil)
-pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
+#pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
+pwd_context = CryptContext(schemes=["pbkdf2_sha256", "bcrypt"], deprecated="auto")
 
 # Databasefunksjoner
 def get_db():
