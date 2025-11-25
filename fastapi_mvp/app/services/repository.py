@@ -20,7 +20,7 @@ def fetch_events(startDate=None, endDate=None, classification=None, keyword=None
         "sort": "date,asc",
     }
     
-    if startDate and endDate:
+    if startDate and endDate:cd HTML/INFO212/fastapi_mvp
         params["startDateTime"] = f"{startDate}T00:00:00Z"
         params["endDateTime"] = f"{endDate}T23:59:59Z"
 
