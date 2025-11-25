@@ -1,35 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Form</title>
-    <link rel="stylesheet" href="{{ url_for('static', path='/style.css') }}">
-</head>
-<body>
-    <div class="login-container">
-        <div class="login-card">
-            <h2>Log In</h2>
-            {% if error %}
-            <div class="error-message">{{ error }}</div>
-            {% endif %}
-            <form action="/login" method="post">
-                <div class="input-field">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" name="username" required placeholder="Enter your username">
-                </div>
-                <div class="input-field">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required placeholder="Enter your password">
-                </div>
-                <button type="submit" class="login-btn">Sign In</button>
-            </form>
-            <div class="links">
-                <a href="/forgot-password">Forgot Password</a>
-                <span> • </span>
-                <a href="/signup">Don't have an account? Sign Up</a>
-            </div>
-        </div>
+{% extends "base.html" %}
+{% block title %}Logg inn{% endblock %}
+{% block content %}
+<div class="page-wrap">
+  <div class="login-card login-card--narrow">
+    <h2>Logg inn</h2>
+    {% if error %}
+      <div class="error-message">{{ error }}</div>
+    {% endif %}
+    <form method="post" action="/login">
+      <div class="input-field">
+        <label for="username">Brukernavn</label>
+        <input id="username" name="username" type="text" autocomplete="username" required>
+      </div>
+      <div class="input-field">
+        <label for="password">Passord</label>
+        <input id="password" name="password" type="password" required>
+      </div>
+      <button type="submit" class="btn">Logg inn</button>
+    </form>
+    <div class="form-links" style="margin-top:14px;">
+        <a href="/signup">Registrer ny bruker</a>
+      <a href="/forgot-password">Glemt passord</a>
+      <a href="/">Forsiden</a>
     </div>
-</body>
-</html>
+  </div>
+</div>
+{% endblock %}

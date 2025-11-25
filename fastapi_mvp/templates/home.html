@@ -1,189 +1,77 @@
-<!DOCTYPE html>
-<html lang="no">
-<head>
-    <meta charset="UTF-8">
-    <title> Ka skjer Bergen?</title>
+{% extends "base.html" %}
+{% block title %}Hjem{% endblock %}
+{% block content %}
+<div class="page-wrap">
 
-    <!-- Fikk en del irriterende 404 feilmelding når jeg refeshet siden, så ved å legge inn disse lenkene forsvant de-->
-    <link rel="icon" href="https://icons.iconarchive.com/icons/papirus-team/papirus-apps/256/gnome-calendar-icon.png">
-    <link rel="apple-touch-icon" href="https://icons.iconarchive.com/icons/papirus-team/papirus-apps/256/gnome-calendar-icon.png">
+  <div class="login-card">
+    <h2>Søk etter arrangement</h2>
+    <form method="get" action="/" style="display:flex; flex-wrap:wrap; gap:14px;">
+      <div class="input-field" style="flex:1 1 220px; min-width:180px;">
+        <label for="keyword">Søk (artist / sted / ord)</label>
+        <input id="keyword" name="keyword" value="{{ keyword or '' }}">
+      </div>
+      <div class="input-field" style="flex:1 1 160px; min-width:140px;">
+        <label for="startDate">Fra dato</label>
+        <input id="startDate" type="date" name="startDate" value="{{ startDate }}">
+      </div>
+      <div class="input-field" style="flex:1 1 160px; min-width:140px;">
+        <label for="endDate">Til dato</label>
+        <input id="endDate" type="date" name="endDate" value="{{ endDate }}">
+      </div>
+      <div class="input-field" style="flex:1 1 170px; min-width:150px;">
+        <label for="classification">Type</label>
+        <select id="classification" name="classification">
+          <option value="" {% if not classification %}selected{% endif %}>Alle</option>
+          <option value="Music" {% if classification == 'Music' %}selected{% endif %}>Musikk</option>
+          <option value="Theatre" {% if classification == 'Theatre' %}selected{% endif %}>Teater</option>
+          <option value="Comedy" {% if classification == 'Comedy' %}selected{% endif %}>Standup</option>
+          <option value="Festival" {% if classification == 'Festival' %}selected{% endif %}>Festival</option>
+          <option value="Sports" {% if classification == 'Sports' %}selected{% endif %}>Sport</option>
+        </select>
+      </div>
+      <div style="flex:1 1 100%; display:flex; gap:10px; flex-wrap:wrap;">
+        <button type="submit" class="btn">Søk</button>
+        <a href="/" class="btn btn-small">Nullstill</a>
+        {% if not current_user %}
+          <a href="/login" class="btn btn-small">Logg inn</a>
+        {% endif %}
+      </div>
+    </form>
+  </div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-          const today = new Date().toISOString().split("T")[0];
-          const startDate = document.querySelector('input[name="startDate"]');
-          const endDate = document.querySelector('input[name="endDate"]');
-        
-          // Ikke tillat dato bakover i tid
-          startDate.min = today;
-          endDate.min = today;
-        
-          // Når brukeren velger startdato, oppdater endDate.min
-          startDate.addEventListener("change", () => {
-            endDate.min = startDate.value;
-          });
-        });
-        </script>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f6fa;
-            color: #333;
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 30px auto;
-            background: #fff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .auth-section {
-            text-align: right;
-            margin-bottom: 20px;
-            padding: 10px;
-            background-color: #f8f9fa;
-            border-radius: 6px;
-        }
-
-        .auth-link {
-            text-decoration: none;
-            padding: 8px 16px;
-            background-color: #0066cc;
-            color: white;
-            border-radius: 6px;
-            margin-left: 10px;
-        }
-
-        .auth-link:hover {
-            background-color: #004999;
-        }
-
-        form {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-            align-items: center;
-        }
-
-        input, select {
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-        }
-
-        /* --- KNAPPER --- */
-
-        /* Make stil */
-        button[type="submit"],
-        .reset-button {
-            background-color: #0066cc;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            text-align: center;
-            transition: background-color 0.2s;
-        }
-
-        /* Stor søkeknapp */
-        button[type="submit"] {
-            padding: 10px 22px;
-            font-size: 16px;
-            margin-right: 6px; /* Luft*/
-        }
-
-        /* Nullstill knapp */
-        .reset-button {
-            padding: 6px 12px;
-            font-size: 13px;
-            text-decoration: none;
-        }
-
-        /* Hover-effekt*/
-        button[type="submit"]:hover,
-        .reset-button:hover {
-            background-color: #004999;
-        }
-
-        /* --- ARRANGEMENTLISTE --- */
-        .event {
-            border-bottom: 1px solid #eee;
-            padding: 10px 0;
-        }
-
-        .event img {
-            max-width: 150px;
-            border-radius: 6px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <!-- Autentiseringsseksjon - bare innloggingsknapp når ikke logget inn -->
-        <div class="auth-section">
-            {% if current_user %}
-                <span>Velkommen, {{ current_user.username }}!</span>
-                <a href="/logout" class="auth-link">Logg ut</a>
-                <a href="/dashboard" class="auth-link">Dashboard</a>
-            {% else %}
-                <a href="/login" class="auth-link">Logg inn</a>
-            {% endif %}
-        </div>
-
-        <h1>Ka skjer Bergen?</h1>
-    
-        <form method="get" action="/">
-            <div class="search-bar">
-                <input type="text" name="keyword" placeholder="Søk etter artist, arrangement eller sted" value="{{ keyword or '' }}">
-                <button type="submit">Søk</button>
-            </div>
-    
-            <div class="filters">
-                <label>Fra dato:</label>
-                <input type="date" name="startDate" value="{{ startDate }}">
-                <label>Til dato:</label>
-                <input type="date" name="endDate" value="{{ endDate }}">
-    
-                <label>Type arrangement:</label>
-                <select name="classification">
-                    <option value="" {% if not classification %}selected{% endif %}>Alle</option>
-                    <option value="Music" {% if classification == 'Music' %}selected{% endif %}>Musikk</option>
-                    <option value="Theatre" {% if classification == 'Theatre' %}selected{% endif %}>Teater</option>
-                    <option value="Comedy" {% if classification == 'Comedy' %}selected{% endif %}>Standup / Humor</option>
-                    <option value="Festival" {% if classification == 'Festival' %}selected{% endif %}>Festival</option>
-                    <option value="Sports" {% if classification == 'Sports' %}selected{% endif %}>Sport</option>
-                </select>
-    
-                <button type="submit">Søk</button>
-                <a href="/" class="reset-button">Nullstill</a>
-            </div>
-        </form>
-    
-
-    {% if events %}
+  <div class="login-card">
+    <h3>Arrangementer</h3>
+    {% if events and events|length > 0 %}
+      <ul class="event-list">
         {% for e in events %}
-            <div class="event">
-                <h3>{{ e.name }}</h3>
-                <p><strong>Dato:</strong> {{ e.dates.start.localDate }}</p>
-                {% if e._embedded.venues %}
-                    <p><strong>Sted:</strong> {{ e._embedded.venues[0].name }}</p>
-                {% endif %}
-                {% if e.images %}
-                    <img src="{{ e.images[0].url }}" alt="{{ e.name }}">
-                {% endif %}
-                <p><a href="{{ e.url }}" target="_blank">Finn billetter</a></p>
-            </div>
+        <li class="event-item">
+            <strong>{{ e.name }}</strong>
+            ({{ e.dates.start.localDate }})
+            {% if e._embedded.venues %} – {{ e._embedded.venues[0].name }}{% endif %}
+            {% if e.images %}
+                <img src="{{ e.images[0].url }}" alt="{{ e.name }}" class="event-thumb">
+            {% endif %}
+            {% if e.url %}
+              <a href="{{ e.url }}" target="_blank" rel="noopener noreferrer">Billetter</a>
+            {% endif %}
+          </li>
         {% endfor %}
+      </ul>
     {% else %}
-        <p>Ingen arrangementer funnet.</p>
+      <p>Ingen arrangementer funnet.</p>
     {% endif %}
+  </div>
+
 </div>
-</body>
-</html>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const today = new Date().toISOString().split("T")[0];
+  const s = document.getElementById("startDate");
+  const e = document.getElementById("endDate");
+  if (s && e) {
+    s.min = today; e.min = today;
+    s.addEventListener("change", () => { e.min = s.value; });
+  }
+});
+</script>
+{% endblock %}

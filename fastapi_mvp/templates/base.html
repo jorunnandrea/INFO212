@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Ka skjer Bergen?{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
+</head>
+<body>
+  <!-- DEBUG: base startet -->
+  <div style="background:#fff;padding:6px 10px;font-size:14px;">
+    {% if current_user %}
+      Bruker: <strong>{{ current_user.username }}</strong> |
+      <a href="/logout">Logg ut</a> |
+      <a href="/dashboard">Dashboard</a>
+    {% else %}
+      <a href="/login">Logg inn</a> |
+      <a href="/signup">Registrer</a>
+    {% endif %}
+  </div>
+  <hr>
+  {% block content %}{% endblock %}
+  <!-- DEBUG: base slutt -->
+</body>
+</html>

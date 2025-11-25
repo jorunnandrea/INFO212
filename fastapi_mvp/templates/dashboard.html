@@ -1,34 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <link rel="stylesheet" href="{{ url_for('static', path='/style.css') }}">
-</head>
-<body>
-    <nav>
-        <div class="nav-container">
-            <h1><a href="/">Ka skjer i Bergen?</a></h1>
-            {% if current_user %}
-            <div class="nav-user">
-                <span>Velkommen, {{ username }}!</span>
-                <form action="/logout" method="post" style="display: inline;">
-                    <button type="submit">Logg ut</button>
-                </form>
-            </div>
-            {% endif %}
-        </div>
-    </nav>
-
-    <div class="container">
-        <h2>Din Dashboard</h2>
-        <p>Du er logget inn som: <strong>{{ username }}</strong></p>
-
-        <!-- ✅ NEW: Link to change password -->
-        <p><a href="/change-password">Endre passord</a></p>
-
-        <!-- Other dashboard content... -->
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="page-wrap">
+  <div class="login-card login-card--narrow">
+    <h2>Dashboard</h2>
+    <p>Innlogget som <strong>{{ username }}</strong></p>
+    <div class="form-links" style="margin-top:12px;">
+      <a href="/change-password">Endre passord</a>
+      <a href="/logout">Logg ut</a>
+      <a href="/">Forsiden</a>
     </div>
-</body>
-</html>
+  </div>
+</div>
+{% endblock %}
