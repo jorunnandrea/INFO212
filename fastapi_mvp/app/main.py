@@ -18,12 +18,7 @@ app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-
-
 # Passordhashing
-#pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-# Passordhashing (byttet fra bcrypt til pbkdf2_sha256 pga backend-feil)
-#pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 pwd_context = CryptContext(schemes=["pbkdf2_sha256", "bcrypt"], deprecated="auto")
 
 # Databasefunksjoner
@@ -96,31 +91,26 @@ def show_signup(request: Request):
 def signup(
     request: Request,
     username: str = Form(...), 
-    email: str = Form(...), 
+    email: str = Form(...),
     password: str = Form(...), 
-    confirm_password: str = Form(...)
 ):
-    if password != confirm_password:
-        return templates.TemplateResponse("signup.html", {
-            "request": request,
-            "error": "Passwords do not match"
-        })
-    
+
     db = get_db()
     hashed_password = pwd_context.hash(password)
-    
     try:
-        db.execute("INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)", 
-                   (username, email, hashed_password))
+        db.execute(
+            "INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)",
+            (username, email, hashed_password)
+        )
         db.commit()
-        db.close()
-        return RedirectResponse(url="/", status_code=303)  # Changed from /login to /
     except sqlite3.IntegrityError:
         db.close()
         return templates.TemplateResponse("signup.html", {
             "request": request,
-            "error": "Username or email already exists"
+            "error": "Brukernavn eller e-post er allerede i bruk"
         })
+    db.close()
+    return RedirectResponse(url="/login", status_code=303)
 
 @app.get("/logout")
 def logout(response: Response):
