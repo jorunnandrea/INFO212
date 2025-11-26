@@ -1,18 +1,18 @@
 import os
 import requests
 
-TICKETMASTER_URL = "https://app.ticketmaster.com/discovery/v2/events.json"
+TICKETMASTER_URL = "https://app.ticketmaster.com/discovery/v2/events"
 
 def fetch_events(startDate=None, endDate=None, classification=None, keyword=None, size=200):
-    api_key = os.environ.get("API_KEY")
-    if not api_key: #hvis det ikke er noe å hente så kommer det en tom liste - kankje bedre med en feilmelding? 
+    api_key = os.getenv("API_KEY")
+    if not api_key:
+        # Log or handle missing key if needed
         return []
 
-    #parameter for å hente info fra APIet
     params = {
         "apikey": api_key,
         "countryCode": "NO",
-        "latlong": "60.39299,5.32415",
+        "latlong": "60.39299,5.32415",  # Bergen, Norway
         "radius": "20",
         "unit": "km",
         "locale": "*",
@@ -34,6 +34,8 @@ def fetch_events(startDate=None, endDate=None, classification=None, keyword=None
         response = requests.get(TICKETMASTER_URL, params=params, timeout=10)
         response.raise_for_status()
         data = response.json()
-        return (data.get("_embedded") or {}).get("events", []) or []
-    except requests.RequestException:
+        events = data.get("_embedded", {}).get("events", [])
+        return events if isinstance(events, list) else []
+    except requests.RequestException as e:
+        # Optional: print(e) for debugging
         return []

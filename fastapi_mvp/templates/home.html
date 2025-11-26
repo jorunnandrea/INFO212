@@ -1,77 +1,252 @@
-{% extends "base.html" %}
-{% block title %}Hjem{% endblock %}
-{% block content %}
-<div class="page-wrap">
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arrangementer i Bergen</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .top-bar {
+            background: white;
+            padding: 0.75rem 1.5rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.95rem;
+        }
+        .logo h1 {
+            margin: 0;
+            color: #5a36c9;
+            font-size: 1.2rem;
+        }
+        .auth-links a {
+            text-decoration: none;
+            color: #5a36c9;
+            font-weight: 600;
+            margin-left: 0.8rem;
+        }
+        .search-form {
+            padding: 1rem 1.5rem;
+            background: white;
+            border-bottom: 1px solid #eee;
+        }
+        .search-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+        .search-row label {
+            margin: 0;
+            color: #555;
+        }
+        input, select, button {
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+        button[type="submit"] {
+            background: #5a36c9;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        button[type="submit"]:hover {
+            background: #4a2db6;
+        }
+        button[type="button"] {
+            background: white;
+            color: #5a36c9;
+            border: 1px solid #5a36c9;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        button[type="button"]:hover {
+            background: #f9f7ff;
+        }
+        .scrollable-container {
+            max-height: 70vh;
+            overflow-y: auto;
+            padding: 0 1rem 1rem;
+        }
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1rem;
+        }
+        .event-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+        }
+        .event-image {
+            width: 100%;
+            height: 130px;
+            object-fit: cover;
+        }
+        .event-info {
+            padding: 0.75rem;
+        }
+        .event-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin: 0 0 0.3rem;
+            color: #222;
+            line-height: 1.3;
+        }
+        .event-meta {
+            color: #666;
+            font-size: 0.8rem;
+            margin-bottom: 0.3rem;
+        }
+        .event-link {
+            display: block;
+            color: #5a36c9;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        .event-link:hover {
+            text-decoration: underline;
+        }
+        .no-events {
+            text-align: center;
+            padding: 2rem;
+            color: #888;
+            font-size: 1rem;
+        }
+        /* Clean scrollbar */
+        .scrollable-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .scrollable-container::-webkit-scrollbar-track {
+            background: #f0f0f0;
+            border-radius: 3px;
+        }
+        .scrollable-container::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 3px;
+        }
+        .scrollable-container::-webkit-scrollbar-thumb:hover {
+            background: #aaa;
+        }
 
-  <div class="login-card">
-    <h2>Søk etter arrangement</h2>
-    <form method="get" action="/" style="display:flex; flex-wrap:wrap; gap:14px;">
-      <div class="input-field" style="flex:1 1 220px; min-width:180px;">
-        <label for="keyword">Søk (artist / sted / ord)</label>
-        <input id="keyword" name="keyword" value="{{ keyword or '' }}">
-      </div>
-      <div class="input-field" style="flex:1 1 160px; min-width:140px;">
-        <label for="startDate">Fra dato</label>
-        <input id="startDate" type="date" name="startDate" value="{{ startDate }}">
-      </div>
-      <div class="input-field" style="flex:1 1 160px; min-width:140px;">
-        <label for="endDate">Til dato</label>
-        <input id="endDate" type="date" name="endDate" value="{{ endDate }}">
-      </div>
-      <div class="input-field" style="flex:1 1 170px; min-width:150px;">
-        <label for="classification">Type</label>
-        <select id="classification" name="classification">
-          <option value="" {% if not classification %}selected{% endif %}>Alle</option>
-          <option value="Music" {% if classification == 'Music' %}selected{% endif %}>Musikk</option>
-          <option value="Theatre" {% if classification == 'Theatre' %}selected{% endif %}>Teater</option>
-          <option value="Comedy" {% if classification == 'Comedy' %}selected{% endif %}>Standup</option>
-          <option value="Festival" {% if classification == 'Festival' %}selected{% endif %}>Festival</option>
-          <option value="Sports" {% if classification == 'Sports' %}selected{% endif %}>Sport</option>
-        </select>
-      </div>
-      <div style="flex:1 1 100%; display:flex; gap:10px; flex-wrap:wrap;">
-        <button type="submit" class="btn">Søk</button>
-        <a href="/" class="btn btn-small">Nullstill</a>
-        {% if not current_user %}
-          <a href="/login" class="btn btn-small">Logg inn</a>
-        {% endif %}
-      </div>
-    </form>
-  </div>
+        /* Mobile-friendly */
+        @media (max-width: 768px) {
+            .search-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .search-row > div {
+                display: flex;
+                gap: 0.5rem;
+                justify-content: flex-end;
+            }
+            .search-row label {
+                margin-top: 0.5rem;
+            }
+            input, select {
+                width: 100% !important;
+            }
+        }
+    </style>
+</head>
+<body>
 
-  <div class="login-card">
-    <h3>Arrangementer</h3>
-    {% if events and events|length > 0 %}
-      <ul class="event-list">
-        {% for e in events %}
-        <li class="event-item">
-            <strong>{{ e.name }}</strong>
-            ({{ e.dates.start.localDate }})
-            {% if e._embedded.venues %} – {{ e._embedded.venues[0].name }}{% endif %}
-            {% if e.images %}
-                <img src="{{ e.images[0].url }}" alt="{{ e.name }}" class="event-thumb">
+    <div class="container">
+        <div class="top-bar">
+            <div class="logo">
+                <h1>🎟️ Bergen Events</h1>
+            </div>
+            <div class="auth-links">
+                {% if current_user %}
+                    Velkommen, <strong>{{ current_user.username }}</strong>!
+                    <a href="/logout">Logg ut</a>
+                {% else %}
+                    <a href="/login">Logg inn</a>
+                    <a href="/signup">Registrer</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <form method="GET" class="search-form" id="searchForm">
+            <div class="search-row">
+                <input type="text" name="keyword" placeholder="Søk..." value="{{ keyword or '' }}" style="flex: 1;">
+                <label>Fra:</label>
+                <input type="date" name="startDate" value="{{ startDate or '' }}">
+                <label>Til:</label>
+                <input type="date" name="endDate" value="{{ endDate or '' }}">
+                <label>Type:</label>
+                <select name="classification">
+                    <option value="">Alle</option>
+                    <option value="Music" {% if classification == 'Music' %}selected{% endif %}>Musikk</option>
+                    <option value="Sport" {% if classification == 'Sport' %}selected{% endif %}>Sport</option>
+                    <option value="Theatre" {% if classification == 'Theatre' %}selected{% endif %}>Teater</option>
+                </select>
+                <div>
+                    <button type="submit">Søk</button>
+                    <button type="button" onclick="resetForm()">Nullstill</button>
+                </div>
+            </div>
+        </form>
+
+        <div class="scrollable-container">
+            {% if events %}
+                <div class="events-grid">
+                    {% for event in events %}
+                        <div class="event-card">
+                            {% if event.images and event.images|length > 0 %}
+                                <img class="event-image" src="{{ event.images[0].url }}" alt="{{ event.name }}">
+                            {% else %}
+                                <div style="height: 130px; display: flex; align-items: center; justify-content: center; background: #f0f0f0; color: #888; font-size: 0.8rem;">
+                                    Ingen bilde
+                                </div>
+                            {% endif %}
+                            <div class="event-info">
+                                <h2 class="event-title">{{ event.name }}</h2>
+                                <div class="event-meta">
+                                    📅 {{ event.dates.start.localDate }}
+                                    {% if event._embedded.venues and event._embedded.venues[0] %}
+                                        • {{ event._embedded.venues[0].name }}
+                                    {% endif %}
+                                </div>
+                                <a href="{{ event.url }}" target="_blank" class="event-link">Billetter →</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-events">
+                    Ingen arrangementer. Prøv et annet søk.
+                </div>
             {% endif %}
-            {% if e.url %}
-              <a href="{{ e.url }}" target="_blank" rel="noopener noreferrer">Billetter</a>
-            {% endif %}
-          </li>
-        {% endfor %}
-      </ul>
-    {% else %}
-      <p>Ingen arrangementer funnet.</p>
-    {% endif %}
-  </div>
+        </div>
+    </div>
 
-</div>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const today = new Date().toISOString().split("T")[0];
-  const s = document.getElementById("startDate");
-  const e = document.getElementById("endDate");
-  if (s && e) {
-    s.min = today; e.min = today;
-    s.addEventListener("change", () => { e.min = s.value; });
-  }
-});
-</script>
-{% endblock %}
+    <script>
+        function resetForm() {
+            document.querySelector('input[name="keyword"]').value = '';
+            document.querySelector('input[name="startDate"]').value = '';
+            document.querySelector('input[name="endDate"]').value = '';
+            document.querySelector('select[name="classification"]').value = '';
+            document.getElementById('searchForm').submit();
+        }
+    </script>
+
+</body>
+</html>
