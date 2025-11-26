@@ -13,3 +13,4 @@ app/test.py
 
 # macOS systemfiler
 .DS_Storeusers.db
+users.db
